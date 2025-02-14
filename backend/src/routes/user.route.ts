@@ -34,6 +34,19 @@ user.post('/signup',async (c)=>{
     const body  = await c.req.json();
 
     try{
+        const existingUser = await prisma.user.findUnique({
+            where:{
+                email:body.email,
+            }
+        })
+
+        if(existingUser){
+            return c.json({
+                message:'User already exists',
+                success:false
+            });
+        }
+
         const user = await prisma.user.create({
             data:{
                 email:body.email,
@@ -48,20 +61,54 @@ user.post('/signup',async (c)=>{
 
         const jwt_token = await sign(payload,c.env.JWT_SECRET);
 
-        return c.json({jwt_token});
+        return c.json({
+            jwt_token,
+            message:"Account created successfully",
+            success:true
+        });
 
     } catch(e){
         console.log(e);
         c.status(403);
     }
-
-    // console.log(res);
-
-    // return c.json({message:'User signed up'});
 })
 
-user.post('/signin',(c)=>{
-    return c.json({message:'User signed in'});
+user.post('/signin',async (c)=>{
+    const prisma = getPrismaClient(c);
+    const body = await c.req.json();
+
+    try{
+        const user = await prisma.user.findUnique({
+            where:{
+                email:body.email,
+                password:body.password
+            }
+        });
+    
+        if(!user){
+            return c.json({
+                message:'Invalid credentials',
+                success:false
+            })
+        }
+    
+        const payload = {
+            id:user.id,
+            exp:Date.now() + 1000 * 60 * 60 * 5,
+        }
+    
+        const jwt_token = await sign(payload,c.env.JWT_SECRET);
+    
+        return c.json({
+            jwt_token,
+            message:"Lgged in successfully",
+            success:true
+        });
+    }catch(e){
+        console.log(e);
+        c.status(403);
+    }
+
 })
 
 export default user;
