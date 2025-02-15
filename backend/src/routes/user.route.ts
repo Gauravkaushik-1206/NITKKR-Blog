@@ -7,6 +7,9 @@ const user = new Hono<{
     Bindings:{
         DATABASE_URL: string;
         JWT_SECRET: string;
+    },
+    Variables:{
+        prisma: any;
     }
 }>();
 
@@ -29,7 +32,8 @@ user.post('/signup',async (c)=>{
     // const prisma = new PrismaClient({
     //     datasourceUrl: c.env.DATABASE_URL,
     // }).$extends(withAccelerate())
-    const prisma = getPrismaClient(c);
+    const prisma = c.get('prisma');
+    // const prisma = getPrismaClient(c);
 
     const body  = await c.req.json();
 

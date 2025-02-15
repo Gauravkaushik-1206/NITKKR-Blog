@@ -3,15 +3,28 @@ import user from './routes/user.route'
 import blog from './routes/blog.route';
 import { verify } from 'hono/jwt';
 import { JWTPayload } from 'hono/utils/jwt/types';
+import { PrismaClient } from '@prisma/client/edge';
+import { withAccelerate } from '@prisma/extension-accelerate';
 
 const app = new Hono<{
   Bindings: {
+    DATABASE_URL: string;
     JWT_SECRET: string;
   },
   Variables: {
     userId: JWTPayload['id'];
+    prisma: any;
   }
 }>()
+
+app.use('*',async (c,next)=>{
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    c.set('prisma',prisma);
+    await next();
+})
 
 app.use('/api/v1/blog/*', async (c,next)=>{
   const header = c.req.header('authorization') || '';

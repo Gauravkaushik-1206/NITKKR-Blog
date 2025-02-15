@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client/extension';
+import { PrismaClient } from '@prisma/client/edge';
 import { withAccelerate } from '@prisma/extension-accelerate';
 import { Hono } from 'hono';
 const blog = new Hono<{
@@ -45,7 +45,7 @@ blog.put('/blog',async (c)=>{
     const prisma  = getPrismaClient(c);
     const body = await c.req.json();
 
-    const updatedBlog = prisma.post.update({
+    const updatedBlog = await prisma.post.update({
         where:{
             id:body.id,
             authorId:userId
@@ -62,47 +62,49 @@ blog.put('/blog',async (c)=>{
     });
 })
 
+
+blog.get('/blog/bulk',async (c)=>{
+    const prisma = getPrismaClient(c);
+    const blogs = await prisma.post.findMany();
+    
+    return c.json({
+        message:'Blogs',
+        success:true,
+        blogs
+    });
+})
+
+blog.get('/blog/user',async (c)=>{
+    const userId = c.get('userId');
+    
+    const prisma = getPrismaClient(c);
+    const blogs = await prisma.post.findMany({
+        where:{
+            authorId:userId
+        }
+    });
+    return c.json({
+        message:'Blogs',
+        success:true,
+        blogs
+    });
+})
+
 blog.get('/blog/:id',async (c)=>{
     const userId = c.get('userId');
 
     const prisma  = getPrismaClient(c);
     const id = c.req.param('id');
 
-    const blog = prisma.post.findUnique({
+    const blog = await prisma.post.findUnique({
         where:{
             id:id,
         }
     })
     return c.json({
-        message:'Blog fetched',
+        message:'Blog fetch',
         success:true,
         blog
-    });
-})
-
-blog.get('/blog/bulk',(c)=>{
-    const prisma = getPrismaClient(c);
-    const blogs = prisma.post.find({});
-    return c.json({
-        message:'Blogs fetched',
-        success:true,
-        blogs
-    });
-})
-
-blog.get('/blog/user',(c)=>{
-    const userId = c.get('userId');
-
-    const prisma = getPrismaClient(c);
-    const blogs = prisma.post.findMany({
-        where:{
-            authorId:userId
-        }
-    });
-    return c.json({
-        message:'Blogs fetched',
-        success:true,
-        blogs
     });
 })
 
