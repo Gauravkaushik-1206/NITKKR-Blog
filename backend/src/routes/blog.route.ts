@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client/edge';
 import { withAccelerate } from '@prisma/extension-accelerate';
 import { Hono } from 'hono';
+import { createBlogInput, updateBlogInput } from '@kaushik1206/blog-common';
+
 const blog = new Hono<{
     Variables:{
         userId:string;
@@ -19,6 +21,14 @@ blog.post('/blog',async (c)=>{
     const userId = c.get('userId');
 
     const body = await c.req.json();
+
+    const { success } = createBlogInput.safeParse(body);
+    if(!success){
+        return c.json({
+            message:'Invalid input',
+            success:false
+        })
+    }
 
     const prisma = getPrismaClient(c);
 
@@ -44,6 +54,14 @@ blog.put('/blog',async (c)=>{
 
     const prisma  = getPrismaClient(c);
     const body = await c.req.json();
+
+    const { success } = updateBlogInput.safeParse(body);
+    if(!success){
+        return c.json({
+            message:'Invalid input',
+            success:false
+        })
+    }
 
     const updatedBlog = await prisma.post.update({
         where:{

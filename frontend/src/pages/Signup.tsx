@@ -1,4 +1,5 @@
 import { Quote } from "../components/Quote";
+import { SignUpForm } from "../components/SignUpForm";
 
 
 export function Signup() {
@@ -6,7 +7,7 @@ export function Signup() {
 
     <div className="grid grid-cols-2">
         <div>
-            
+            <SignUpForm></SignUpForm>
         </div>
         <div className="invisible lg:visible">
         <Quote></Quote>
