@@ -18,7 +18,7 @@ export function Signin() {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-100 p-4">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-100 p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -30,7 +30,7 @@ export function Signin() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            className="w-16 h-16 bg-blue-500 rounded-full mx-auto flex items-center justify-center"
+            className="w-16 h-16 bg-black rounded-full mx-auto flex items-center justify-center"
           >
             <svg
               className="w-10 h-10 text-white"

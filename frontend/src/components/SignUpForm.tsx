@@ -2,19 +2,41 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { ChangeEvent, useState } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { SignupInput} from "@kaushik1206/blog-common"
+import axios from "axios"
+import { BACKEND_URL } from "../../config"
 
 export function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate();
+
+  const [postInputs,setpostInputs] = useState<SignupInput>({
+    email:"",
+    password:"",
+    name:""
+  })
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     // Simulate API call
+    try{
+      const res = await axios.post(`${BACKEND_URL}/user/signup`,postInputs);
+      const data = res.data;
+      localStorage.setItem("token",data.jwt_token);
+      console.log(localStorage.getItem("token"));
+      navigate("/blog");
+
+    }catch(e){
+      console.log("Error",e);
+    }
+
     await new Promise((resolve) => setTimeout(resolve, 2000))
     setIsLoading(false)
   }
@@ -39,6 +61,8 @@ export function SignUpForm() {
   return (
     <div className="min-h-screen w-full flex">
       {/* Left side - Sign up form */}
+      {/* {JSON.stringify(postInputs)} */}
+
       <motion.div
         className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8"
         initial="hidden"
@@ -58,33 +82,29 @@ export function SignUpForm() {
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             <div className="space-y-4">
-              <motion.div variants={itemVariants}>
-                <label htmlFor="username" className="block text-sm font-medium">
-                  Username
-                </label>
-                <Input
-                  id="username"
-                  name="username"
-                  type="text"
-                  placeholder="Enter your username"
-                  required
-                  className="mt-1"
-                />
-              </motion.div>
 
-              <motion.div variants={itemVariants}>
-                <label htmlFor="email" className="block text-sm font-medium">
-                  Email
-                </label>
-                <Input id="email" name="email" type="email" placeholder="m@example.com" required className="mt-1" />
-              </motion.div>
+              <LabelledInput label={"Email"} htmlFor={"email"} id={"email"} name={"email"} type={"email"} placeholder={"m@example.com"} 
+                onChange={(e)=>{setpostInputs({
+                  ...postInputs,
+                  email:e.target.value
+                })}}
+              >  
+              </LabelledInput>
 
-              <motion.div variants={itemVariants}>
-                <label htmlFor="password" className="block text-sm font-medium">
-                  Password
-                </label>
-                <Input id="password" name="password" type="password" required className="mt-1" />
-              </motion.div>
+              <LabelledInput label={"Name"} htmlFor={"name"} id={"name"} name={"name"} placeholder={"John Doe"} 
+                onChange={(e)=>{setpostInputs({
+                  ...postInputs,
+                  name:e.target.value
+                })}}
+              >  
+              </LabelledInput>
+              <LabelledInput label={"Password"} htmlFor={"password"} id={"password"} name={"password"} type={"password"}
+                onChange={(e)=>{setpostInputs({
+                  ...postInputs,
+                  password:e.target.value
+                })}}
+              >  
+              </LabelledInput>
             </div>
 
             <motion.div variants={itemVariants}>
@@ -96,6 +116,41 @@ export function SignUpForm() {
         </div>
       </motion.div>
     </div>
+  )
+}
+
+interface LabelledInputType{
+  label:string,
+  htmlFor:string,
+  id:string,
+  name:string,
+  type?:string,
+  placeholder?:string,
+  onChange:(e:ChangeEvent<HTMLInputElement>)=>void,
+}
+
+function LabelledInput({label,htmlFor,id,name,type,placeholder,onChange}:LabelledInputType){
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 },
+  }
+
+  return (
+    <motion.div variants={itemVariants}>
+      <label htmlFor={htmlFor} className="block text-sm font-medium">
+        {label}
+      </label>
+      <Input
+        id={id}
+        name={name}
+        type={type || "text"}
+        placeholder={placeholder}
+        required
+        className="mt-1"
+        onChange={onChange}
+      />
+    </motion.div>
   )
 }
 
