@@ -32,7 +32,7 @@ export function SignUpForm() {
       const data = res.data;
       localStorage.setItem("token",data.jwt_token);
       // console.log(localStorage.getItem("token"));
-      navigate("/blog");
+      navigate("/blogs");
 
     }catch(e){
       console.log("Error",e);
