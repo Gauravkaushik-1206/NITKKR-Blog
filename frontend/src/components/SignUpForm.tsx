@@ -27,10 +27,11 @@ export function SignUpForm() {
     setIsLoading(true)
     // Simulate API call
     try{
+      // const res = await axios.post(`http://localhost:8787/api/v1/user/signup`,postInputs);
       const res = await axios.post(`${BACKEND_URL}/user/signup`,postInputs);
       const data = res.data;
       localStorage.setItem("token",data.jwt_token);
-      console.log(localStorage.getItem("token"));
+      // console.log(localStorage.getItem("token"));
       navigate("/blog");
 
     }catch(e){

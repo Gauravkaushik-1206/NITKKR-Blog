@@ -5,6 +5,7 @@ import { verify } from 'hono/jwt';
 import { JWTPayload } from 'hono/utils/jwt/types';
 import { PrismaClient } from '@prisma/client/edge';
 import { withAccelerate } from '@prisma/extension-accelerate';
+import { cors } from 'hono/cors';
 
 const app = new Hono<{
   Bindings: {
@@ -25,6 +26,18 @@ app.use('*',async (c,next)=>{
     c.set('prisma',prisma);
     await next();
 })
+
+app.use(
+  '/api/v1/*',
+  cors({
+    origin: 'http://localhost:5173',
+    // allowHeaders: ['X-Custom-Header', 'Upgrade-Insecure-Requests'],
+    // allowMethods: ['POST', 'GET', 'OPTIONS'],
+    // exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
+    // maxAge: 600,
+    credentials: true,
+  })
+)
 
 app.use('/api/v1/blog/*', async (c,next)=>{
   const header = c.req.header('authorization') || '';
