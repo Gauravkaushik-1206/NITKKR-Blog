@@ -4,15 +4,35 @@ import type React from "react"
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { SigninInput } from "@kaushik1206/blog-common"
+import { BACKEND_URL } from "../../config"
+import axios from "axios"
 
 export function Signin() {
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate();
+  const [postInputs,setpostInputs] = useState<SigninInput>({
+      email:"",
+      password:"",
+  })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     // Simulate API call
+    try{
+      // const res = await axios.post(`http://localhost:8787/api/v1/user/signup`,postInputs);
+      const res = await axios.post(`${BACKEND_URL}/user/signin`,postInputs);
+      const data = res.data;
+      localStorage.setItem("token",data.jwt_token);
+      // console.log(localStorage.getItem("token"));
+      navigate("/blog");
+
+    }catch(e){
+      console.log("Error",e);
+    }
+
     await new Promise((resolve) => setTimeout(resolve, 2000))
     setIsLoading(false)
   }
@@ -70,6 +90,9 @@ export function Signin() {
                 required
                 className="mt-1"
                 placeholder="Enter your email"
+                onChange = {(e)=>{
+                  setpostInputs({...postInputs,email:e.target.value});
+                }}
               />
             </motion.div>
 
@@ -85,6 +108,12 @@ export function Signin() {
                 required
                 className="mt-1"
                 placeholder="Enter your password"
+                onChange={(e)=>{
+                  setpostInputs({
+                    ...postInputs,
+                    password:e.target.value
+                  })
+                }}
               />
             </motion.div>
 
