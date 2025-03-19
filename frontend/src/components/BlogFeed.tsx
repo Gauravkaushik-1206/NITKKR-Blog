@@ -1,7 +1,10 @@
 import BlogPost from "@/components/BlogPost"
-import { blogPosts } from "@/lib/blog-data"
+import { useBlogs } from "@/lib/blog-data"
+// import { blogPosts } from "@/lib/blog-data"
 
 export default function BlogFeed() {
+  const {blogPosts, loading}= useBlogs();
+
   return (
     <div className="py-8 space-y-10">
       {blogPosts.map((post) => (

@@ -14,11 +14,11 @@ export default function BlogPost({ post }: BlogPostProps) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center mb-2">
           <Avatar className="h-8 w-8 mr-3">
-            <AvatarImage src={post.author.avatar} alt={post.author.name} />
-            <AvatarFallback>{post.author.name.charAt(0)}</AvatarFallback>
+            <AvatarImage src={post?.author?.avatar} alt={post?.author?.name} />
+            <AvatarFallback>{post?.author?.name.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="flex items-center text-sm">
-            <span className="font-medium">{post.author.name}</span>
+            <span className="font-medium">{post?.author?.name}</span>
             <span className="mx-1">·</span>
             <span className="text-gray-500">{post.date}</span>
             {post.memberOnly && (
@@ -34,7 +34,7 @@ export default function BlogPost({ post }: BlogPostProps) {
         </div>
 
         <h2 className="text-xl font-bold mb-2 leading-tight">{post.title}</h2>
-        <p className="text-gray-700 mb-3 line-clamp-3">{post.excerpt}</p>
+        <p className="text-gray-700 mb-3 line-clamp-3">{post.content}</p>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">

@@ -83,7 +83,19 @@ blog.put('/blog',async (c)=>{
 
 blog.get('/blog/bulk',async (c)=>{
     const prisma = getPrismaClient(c);
-    const blogs = await prisma.post.findMany();
+    const blogs = await prisma.post.findMany({
+        select:{
+            id:true,
+            title:true,
+            content:true,
+            published:true,
+            author:{
+                select:{
+                    name:true
+                }
+            }
+        }
+    });
     
     return c.json({
         message:'Blogs',

@@ -1,18 +1,19 @@
 export interface Author {
     name: string
-    avatar: string
+    avatar?: string
   }
   
   export interface BlogPost {
+    authorId:string
     id: string
     title: string
-    excerpt: string
-    date: string
-    author: Author
-    category: string
-    readTime: string
+    content: string
+    date?: string
+    author?: Author
+    category?: string
+    readTime?: string
     image?: string
-    memberOnly: boolean
+    memberOnly?: boolean
     selectedForYou?: boolean
   }
   
